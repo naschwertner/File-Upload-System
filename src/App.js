@@ -13,7 +13,15 @@ const App = () => {
 
   const onFileUploadButtonClick = () => {
     const formData = new FormData();
-    formData.append("demo file", selectedFile, selectedFile?.name);
+    formData.append(
+      "demo file",
+      this.state.selectedFile,
+      this.state.selectedFile.name
+    );
+    // Chamada de API aqui
+    axios.post("https://e9jttm6ap1.execute-api.us-east-1.amazonaws.com/prod/file-upload", formData).then(() => {
+      this.setState({ selectedFile: null, fileUploadedSuccessfully: true });
+    })
 
     axios
       .post(
@@ -29,7 +37,7 @@ const App = () => {
       });
   };
 
-  return (
+ return (
     <div className="container">
       <div className="upload-container">
         <label htmlFor="contained-button-file">{selectedFile && selectedFile.name ? selectedFile.name : "Adicionar Relatório"}</label>
