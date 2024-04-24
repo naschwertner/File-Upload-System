@@ -1,18 +1,17 @@
-import './App.css';
-import React, { Component } from 'react';
-import axios from 'axios';
+import "./App.css";
+import React, { useState } from "react";
+import axios from "axios";
 
-class App extends Component {
-  state = {
-    selectedFile: null,
-    fileUploadedSuccessfully: false
+const App = () => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileUploadedSuccessfully, setFileUploadedSuccessfully] =
+    useState(false);
+
+  const onFileUpload = (event) => {
+    setSelectedFile(event.target.files[0]);
   };
 
-  onFileUpload = event => {
-    this.setState({ selectedFile: event.target.files[0] }); // Correto para acessar o primeiro arquivo selecionado
-  };
-
-  onFileUploadButtonClick = () => {
+  const onFileUploadButtonClick = () => {
     const formData = new FormData();
     formData.append(
       "demo file",
@@ -24,48 +23,56 @@ class App extends Component {
       this.setState({ selectedFile: null, fileUploadedSuccessfully: true });
     })
 
+    axios
+      .post(
+        "https://e9jttm6ap1.execute-api.us-east-1.amazonaws.com/prod/file-upload",
+        formData
+      )
+      .then(() => {
+        setSelectedFile(null);
+        setFileUploadedSuccessfully(true);
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+      });
   };
 
-  fileData = () => {
-    if (this.state.selectedFile) {
-      return (
+ return (
+    <div className="container">
+      <div className="upload-container">
+        <label htmlFor="contained-button-file">{selectedFile && selectedFile.name ? selectedFile.name : "Adicionar Relatório"}</label>
+        <input
+          id="contained-button-file"
+          type="file"
+          accept=".png, .jpeg, .pdf"
+          onChange={onFileUpload}
+        />
+        <button className="upload-button" onClick={onFileUploadButtonClick} disabled={!selectedFile}>Upload</button>
+      </div>
+     
+    
+      {selectedFile ? (
         <div>
-          <h2>Detalhes do arquivo:</h2>
-          <p>Nome do arquivo: {this.state.selectedFile.name}</p>
-          <p>Tipo de arquivo: {this.state.selectedFile.type}</p>
-          <p>Última modificação: {new Date(this.state.selectedFile.lastModified).toDateString()}</p> {/* Correção aplicada aqui */}
+          <h2>Detalhes do Relatório</h2>
+          <p>Nome: {selectedFile?.name}</p>
+          <p>Tipo: {selectedFile?.type}</p>
+          <p>
+            Modificado em: {new Date(selectedFile?.lastModified).toLocaleDateString('pt-BR')}
+          </p>
         </div>
-      );
-    } else if (this.state.fileUploadedSuccessfully) {
-      return (
+      ) : null}
+      {fileUploadedSuccessfully ? (
         <div>
-          <br/>
           <h4>Your file has been successfully uploaded</h4>
         </div>
-      );
-    } else {
-      return (
+      ) : null}
+      {!selectedFile ? (
         <div>
-          <br/>
-          <h4>Escolha um arquivo e pressione o botão Upload</h4>
+          <h4>Escolha um relatório e faça o upload</h4>
         </div>
-      );
-    }
-  };
-
-  render() {
-    return (
-      <div className="container">
-        <h2>Sistema de upload de relatórios</h2>
-        <h3>Upload de arquivos com React e API Serverless</h3>
-        <div>
-          <input type="file" onChange={this.onFileUpload} />
-          <button onClick={this.onFileUploadButtonClick}>Upload</button>
-        </div>
-        {this.fileData()}
-      </div>
-    );
-  }
-}
+      ) : null}
+    </div>
+  );
+};
 
 export default App;
