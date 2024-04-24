@@ -20,7 +20,7 @@ class App extends Component {
       this.state.selectedFile.name
     );
     // Chamada de API aqui
-    axios.port("https://e9jttm6ap1.execute-api.us-east-1.amazonaws.com/prod/file-upload", formData).then(() => {
+    axios.post("https://e9jttm6ap1.execute-api.us-east-1.amazonaws.com/prod/file-upload", formData).then(() => {
       this.setState({ selectedFile: null, fileUploadedSuccessfully: true });
     })
 
@@ -30,10 +30,10 @@ class App extends Component {
     if (this.state.selectedFile) {
       return (
         <div>
-          <h2>File Details:</h2>
-          <p>File Name: {this.state.selectedFile.name}</p>
-          <p>File Type: {this.state.selectedFile.type}</p>
-          <p>Last Modified: {new Date(this.state.selectedFile.lastModified).toDateString()}</p> {/* Correção aplicada aqui */}
+          <h2>Detalhes do arquivo:</h2>
+          <p>Nome do arquivo: {this.state.selectedFile.name}</p>
+          <p>Tipo de arquivo: {this.state.selectedFile.type}</p>
+          <p>Última modificação: {new Date(this.state.selectedFile.lastModified).toDateString()}</p> {/* Correção aplicada aqui */}
         </div>
       );
     } else if (this.state.fileUploadedSuccessfully) {
@@ -47,7 +47,7 @@ class App extends Component {
       return (
         <div>
           <br/>
-          <h4>Choose a file and then press the Upload button</h4>
+          <h4>Escolha um arquivo e pressione o botão Upload</h4>
         </div>
       );
     }
@@ -56,8 +56,8 @@ class App extends Component {
   render() {
     return (
       <div className="container">
-        <h2>File Upload System</h2>
-        <h3>File Upload with React and Serverless API</h3>
+        <h2>Sistema de upload de relatórios</h2>
+        <h3>Upload de arquivos com React e API Serverless</h3>
         <div>
           <input type="file" onChange={this.onFileUpload} />
           <button onClick={this.onFileUploadButtonClick}>Upload</button>
