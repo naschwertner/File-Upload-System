@@ -1,5 +1,6 @@
 import './App.css';
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class App extends Component {
   state = {
@@ -19,8 +20,10 @@ class App extends Component {
       this.state.selectedFile.name
     );
     // Chamada de API aqui
-    console.log(formData);
-    this.setState({ selectedFile: null, fileUploadedSuccessfully: true });
+    axios.port("https://e9jttm6ap1.execute-api.us-east-1.amazonaws.com/prod/file-upload", formData).then(() => {
+      this.setState({ selectedFile: null, fileUploadedSuccessfully: true });
+    })
+
   };
 
   fileData = () => {
